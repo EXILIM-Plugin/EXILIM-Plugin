@@ -1,0 +1,234 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "EXILIMカメラ内のファイルを操作する。",
+        "version": "2.0.0",
+        "title": "File Profile"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/list": {
+            "get": {
+                "summary": "指定パス内のファイル一覧を取得する。",
+                "description": "",
+                "x-type": "one-shot",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "mimeType",
+                        "in": "query",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "required": false,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/FileListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "summary": "指定のファイルを取得する。",
+                "description": "指定ファイルをカメラからコピーし、そのアクセス用uriを取得する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/FileSendResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        }
+    },
+    "definitions": {
+        "FileSendResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "mimeType",
+                        "uri"
+                    ],
+                    "properties": {
+                        "mimeType": {
+                            "type": "string",
+                            "title": "MimeType",
+                            "description": "URIデータのMimeType"
+                        },
+                        "uri": {
+                            "type": "string",
+                            "title": "URI",
+                            "description": "ContentProviderのURI<br>このURIからデータを読み込む"
+                        }
+                    }
+                }
+            ]
+        },
+        "FileListResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "count",
+                        "file"
+                    ],
+                    "properties": {
+                        "count": {
+                            "type": "integer",
+                            "title": "検索結果数",
+                            "description": "検索結果のファイル数"
+                        },
+                        "file": {
+                            "type": "array",
+                            "title": "検索にヒットしたファイルの情報リスト",
+                            "description": "検索にヒットしたファイルの情報を持つオブジェクト(object)の配列。",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "path",
+                                    "mimeType",
+                                    "fileType",
+                                    "fileName",
+                                    "updateDate",
+                                    "fileSize"
+                                ],
+                                "properties": {
+                                    "path": {
+                                        "type": "string",
+                                        "title": "ファイル名を含めたファイルの存在するパス。",
+                                        "description": ""
+                                    },
+                                    "mimeType": {
+                                        "type": "string",
+                                        "title": "MimeType",
+                                        "description": "fileのエンコードするタイプ。"
+                                    },
+                                    "fileType": {
+                                        "type": "string",
+                                        "title": "ファイルの種別",
+                                        "description": "0: ファイル<br>1: ディレクトリ",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "fileName": {
+                                        "type": "string",
+                                        "title": "ファイルの名前",
+                                        "description": ""
+                                    },
+                                    "updateDate": {
+                                        "type": "string",
+                                        "title": "更新時間",
+                                        "description": "RFC 3339"
+                                    },
+                                    "fileSize": {
+                                        "type": "integer",
+                                        "title": "ファイルのサイズ。",
+                                        "description": "単位はbyte。"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0: 正常応答<br>0以外: 異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムの名前",
+                    "description": ""
+                },
+                "version": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムのバージョン名",
+                    "description": ""
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "レスポンスに対する署名",
+                    "description": "アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,349 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "EXILIMカメラによる写真撮影、動画録画または音声録音などの操作を行うAPI。",
+        "version": "2.0.0",
+        "title": "Media Stream Recording Profile"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/preview": {
+            "put": {
+                "summary": "プレビューを開始する",
+                "description": "カメラのリモート撮影を開始し、ライブビュー画像を作成する。ライブビュー画像はプラグイン内でもMotionJpegとして構成され、プラグイン内に設置されたWebサーバ経由でアクセスできる。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "target",
+                        "in": "formData",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "uriにMotionJpegにアクセスするためのURLがセットされる。",
+                        "schema": {
+                            "$ref": "#/definitions/PreviewStartResponse"
+                        }
+                    }
+                },
+                "x-type": "streaming"
+            },
+            "delete": {
+                "summary": "プレビューを終了する",
+                "description": "カメラのリモート撮影を終了し、ライブビュー画像の作成を終了する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "target",
+                        "in": "query",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/PreviewStopResponse"
+                        }
+                    }
+                },
+                "x-type": "streaming"
+            }
+        },
+        "/record": {
+            "post": {
+                "summary": "動画撮影を開始する",
+                "description": "カメラで動画撮影を開始する。録画終了時にレスポンスが返り、その中のpathにデータ取得用のファイルパスが指定されている。カメラから状態変化の通知として onRecordingChangeのイベント通知される。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "target",
+                        "in": "formData",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "timeslice",
+                        "in": "formData",
+                        "required": false,
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "撮影した動画へのファイルパスとその切り出し画像へのuriを設定する。",
+                        "schema": {
+                            "$ref": "#/definitions/RecordResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        },
+        "/stop": {
+            "put": {
+                "summary": "動画撮影を終了する",
+                "description": "カメラの動画撮影を終了する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "target",
+                        "in": "formData",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/RecorderControlResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        },
+        "/takePhoto": {
+            "post": {
+                "summary": "静止画を撮影する",
+                "description": "カメラで静止画を撮影する。撮影後に縮小画像を端末内にコピーするので、そのままアクセスすることができる。レスポンスのuriには縮小画像のuriが設定され、pathに撮影画像本体のカメラ内でのファイル名が設定される。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "target",
+                        "in": "formData",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "撮影した画像へのファイルパスとその縮小画像へのuriを設定する。",
+                        "schema": {
+                            "$ref": "#/definitions/TakePhotoResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        },
+        "/onRecordingChange": {
+            "put": {
+                "summary": "動画録画イベント通知を開始する",
+                "description": "実行期間中はカメラが録画を開始したら\"recording\"、録画を終了したら\"stop\"イベントを送る。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "interval",
+                        "in": "formData",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-type": "event"
+            },
+            "delete": {
+                "summary": "動画録画イベント通知を終了する。",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-type": "event"
+            }
+        }
+    },
+    "definitions": {
+        "TakePhotoResponse": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "path",
+                        "uri"
+                    ],
+                    "properties": {
+                        "uri": {
+                            "type": "string",
+                            "description": "撮影した画像の縮小画像にアクセスするurl。直前に撮影した画像のみ有効であり、次の撮影を行なうとデータは上書きされる。",
+                            "title": "URI"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "撮影された写真のファイルパス。File APIのパラメータとして使用可能。こちらはカメラから直接取得するため、いつでも実行可能。",
+                            "title": "ファイルパス"
+                        }
+                    }
+                }
+            ]
+        },
+        "RecordResponse": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "path",
+                        "uri"
+                    ],
+                    "properties": {
+                        "uri": {
+                            "type": "string",
+                            "description": "撮影された動画の切り出し画像にアクセスできるURI。",
+                            "title": "URI"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "撮影された動画のファイルパス。File APIのパラメータとして使用可能。",
+                            "title": "ファイルパス"
+                        }
+                    }
+                }
+            ]
+        },
+        "PreviewStartResponse": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "uri"
+                    ],
+                    "properties": {
+                        "uri": {
+                            "type": "string",
+                            "description": "開始したプレビューの配信用URI。形式はMotionJPEGとする。",
+                            "title": "プレビュー配信URI"
+                        },
+                        "audio": {
+                            "type": "object",
+                            "description": "",
+                            "title": "",
+                            "properties": {
+                                "uri": {
+                                    "type": "string",
+                                    "description": "",
+                                    "title": ""
+                                }
+                            },
+                            "required": [
+                                "uri"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "PreviewStopResponse": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "RecorderControlResponse": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "product",
+                "result",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "description": "0: 正常応答<br>0以外: 異常応答",
+                    "title": "処理結果"
+                },
+                "product": {
+                    "type": "string",
+                    "description": "",
+                    "title": "DeviceConnectシステムの名前"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "",
+                    "title": "DeviceConnectシステムのバージョン名"
+                },
+                "hmac": {
+                    "type": "string",
+                    "description": "アプリケーション側から事前にHMACキーを共有されていた場合は必須。",
+                    "title": "レスポンスに対する署名"
+                }
+            }
+        }
+    }
+}

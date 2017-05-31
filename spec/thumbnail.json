@@ -1,0 +1,102 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "EXILIMで撮影した写真の縮小画像を扱う",
+        "version": "2.0.0",
+        "title": "Thumbnail Profile"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "指定画像のサムネイルを取得する",
+                "description": "指定した画像の縮小画像をカメラからコピーし、そのuriを取得する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/FileSendResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        }
+    },
+    "definitions": {
+        "FileSendResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "mimeType",
+                        "uri"
+                    ],
+                    "properties": {
+                        "mimeType": {
+                            "type": "string",
+                            "title": "MimeType",
+                            "description": "URIデータのMimeType"
+                        },
+                        "uri": {
+                            "type": "string",
+                            "title": "URI",
+                            "description": "ContentProviderのURI<br>このURIからデータを読み込む"
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0: 正常応答<br>0以外: 異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムの名前",
+                    "description": ""
+                },
+                "version": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムのバージョン名",
+                    "description": ""
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "レスポンスに対する署名",
+                    "description": "アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        }
+    }
+}

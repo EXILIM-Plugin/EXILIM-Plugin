@@ -1,0 +1,86 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "EXILIMカメラのズーム操作機能を提供するAPI。",
+        "version": "2.0.0",
+        "title": "Camera Profile"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/zoom": {
+            "put": {
+                "summary": "ズーム操作を実行する",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "direction",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "in",
+                            "out"
+                        ]
+                    },
+                    {
+                        "name": "movement",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "in-start",
+                            "in-stop",
+                            "1shot",
+                            "max"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        }
+    },
+    "definitions": {
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "product",
+                "result",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "description": "0: 正常応答<br>0以外: 異常応答",
+                    "title": "処理結果"
+                },
+                "product": {
+                    "type": "string",
+                    "description": "",
+                    "title": "DeviceConnectシステムの名前"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "",
+                    "title": "DeviceConnectシステムのバージョン名"
+                }
+            }
+        }
+    }
+}

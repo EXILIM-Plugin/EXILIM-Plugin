@@ -1,0 +1,3 @@
+include ':app'
+include 'dconnect-sdk-for-android'
+project(':dconnect-sdk-for-android').projectDir = new File('../DeviceConnect-Android-master/dConnectSDK/dConnectSDKForAndroid/dconnect-sdk-for-android')

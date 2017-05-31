@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="jp.co.casio.exilim_sample_application.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:textSize="12sp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp">
+
+        <TextView
+            android:id="@+id/textViewUrl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_marginLeft="10dp"
+            android:text="URL Setting : "
+            android:textSize="12sp"/>
+
+        <EditText
+            android:id="@+id/text_url_p"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:text="localhost"
+            android:textColor="@android:color/holo_red_dark" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewExilim"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:text="EXILIM SetUp"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/buttonPluginSetUp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:text="Plugin Setup"
+                android:textSize="10sp"/>
+
+            <Button
+                android:id="@+id/buttonLiveViewStart"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:text="LiveView Start"
+                android:textSize="10sp"/>
+
+            <Button
+                android:id="@+id/buttonLiveViewStop"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:text="LiveView Stop"
+                android:textSize="10sp"/>
+
+            <Button
+                android:id="@+id/buttonTakePhoto"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:text="Take Photo"
+                android:textSize="10sp"/>
+
+            <Button
+                android:id="@+id/buttonMovie"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:text="Movie"
+                android:textSize="10sp"/>
+
+            <WebView
+                android:id="@+id/webViewForThumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7" >
+
+            <WebView
+                android:id="@+id/webViewForLive"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:fitsSystemWindows="true" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="horizontal"
+        android:textSize="12sp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp">
+
+    </LinearLayout>
+
+</LinearLayout>
