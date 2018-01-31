@@ -6,23 +6,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by Daisuke Ohtani on 2017/05/24.
+ * 2018/01/30 POSTをクエリ入力に修正
  */
 
 public class PluginControl {
 
     // ログ用TAG
     private static final String TAG = "ExilimPluginCtrl";
-    // Exilimプラグイン名
+    // EXILIMプラグイン名
     private static final String EXILIM_PLUGIN_NAME = "Exilim";
     // プラグインAPI ID保持
     private String mApiId = null;
@@ -43,7 +40,7 @@ public class PluginControl {
         sStr_UrlText = vstr_url;
 
         url = "http://"+ sStr_UrlText +":4035/gotapi/servicediscovery";
-        str = sendHttpWithResponse(url, "GET", null);
+        str = sendHttpWithResponse(url, "GET");
 
         if(str != null) {
             try {
@@ -71,14 +68,14 @@ public class PluginControl {
         return vb_Ret;
     }
 
-    // Exilim LIVE VIEW 開始API
+    // EXILIM LIVE VIEW 開始API
     public String sendExilimLiveViewStart(){
         if( mApiId != null && sStr_UrlText != null){
             String url,str;
 
             Log.i(TAG, "onClickConnect");
             url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/preview?serviceId=" + mApiId;
-            str = sendHttpWithResponse(url, "PUT", null);
+            str = sendHttpWithResponse(url, "PUT");
 
             return str;
         }
@@ -87,7 +84,7 @@ public class PluginControl {
         }
     }
 
-    // Exilim LIVE VIEW 停止API
+    // EXILIM LIVE VIEW 停止API
     public void sendExilimLiveViewEnd(){
 
         if( mApiId != null && sStr_UrlText != null){
@@ -95,7 +92,7 @@ public class PluginControl {
 
             Log.i(TAG, "onClickConnect");
             url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/preview?serviceId=" + mApiId;
-            str = sendHttpWithResponse(url, "DELETE", null);
+            str = sendHttpWithResponse(url, "DELETE");
 
             if( str == null ) {
                 Log.e(TAG, "sendLiveViewEnd Http_ERR");
@@ -103,16 +100,14 @@ public class PluginControl {
         }
     }
 
-    // Exilim 写真撮影API
+    // EXILIM 写真撮影API
     public String sendExilimTakePhoto(){
         if( mApiId != null && sStr_UrlText != null){
             String url,str, path;
-            url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/takephoto";
 
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("serviceId", mApiId);
-
-            str = sendHttpWithResponse(url, "POST", map);
+            // 2017/10/24　クエリ文字列入力に修正
+            url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/takephoto?serviceId=" + mApiId;
+            str = sendHttpWithResponse(url, "POST");
 
             if (str != null) {
                 try {
@@ -141,20 +136,16 @@ public class PluginControl {
         }
     }
 
-    // Exilim 動画撮影開始API
+    // EXILIM 動画撮影開始API
     public String sendExilimMovieStart(){
         if( mApiId != null && sStr_UrlText != null){
             String url, str, path;
 
             Log.v(TAG, "sendMovieStart");
 
-            url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/Record";
-
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("serviceId", mApiId);
-//            map.put("target", String.valueOf("camera"));
-
-            str = sendHttpWithResponse(url, "POST", map);
+            // 2017/10/24　クエリ文字列入力に修正
+            url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/Record?serviceId=" + mApiId;
+            str = sendHttpWithResponse(url, "POST");
 
             if (str != null) {
                 try {
@@ -185,7 +176,7 @@ public class PluginControl {
         }
     }
 
-    // Exilim 動画撮影状態通知 登録API
+    // EXILIM 動画撮影状態通知 登録API
     public void sendExilimMovieStateChangeEventRegister() {
         if( mApiId != null && sStr_UrlText != null){
             String url,str;
@@ -194,7 +185,7 @@ public class PluginControl {
 
             url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/onRecordingChange?serviceId=" + mApiId;
 
-            str = sendHttpWithResponse(url, "PUT", null);
+            str = sendHttpWithResponse(url, "PUT");
 
             if( str == null ) {
                 Log.e(TAG, "sendMovieStart Http_ERR");
@@ -205,7 +196,7 @@ public class PluginControl {
         return;
     }
 
-    // Exilim 動画撮影状態通知 解除API
+    // EXILIM 動画撮影状態通知 解除API
     public void sendExilimMovieStateChangeEventUnregister() {
         if( mApiId != null && sStr_UrlText != null){
             String url,str;
@@ -214,7 +205,7 @@ public class PluginControl {
 
             url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/onRecordingChange?serviceId=" + mApiId;
 
-            str = sendHttpWithResponse(url, "DELETE", null);
+            str = sendHttpWithResponse(url, "DELETE");
 
             if( str == null ) {
                 Log.e(TAG, "sendMovieStart Http_ERR");
@@ -225,18 +216,18 @@ public class PluginControl {
         return;
     }
 
-    // Exilim 動画撮影状態通知 URL取得API
+    // EXILIM 動画撮影状態通知 URL取得API
     public String getExilimMovieStateChangeEventURL() {
         return "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/onRecordingChange?serviceId=" + mApiId;
     }
 
-    // Exilim 動画撮影停止API
+    // EXILIM 動画撮影停止API
     public void sendExilimMovieStop(){
         if( mApiId != null && sStr_UrlText != null){
             String url,str;
 
             url = "http://" + sStr_UrlText + ":4035/gotapi/mediaStreamRecording/Stop?serviceId=" + mApiId;
-            str = sendHttpWithResponse(url, "PUT", null);
+            str = sendHttpWithResponse(url, "PUT");
 
             if( str == null ) {
                 Log.e(TAG, "sendMovieStop Http_ERR");
@@ -244,13 +235,13 @@ public class PluginControl {
         }
     }
 
-    // Exilim サムネイル画像取得API
+    // EXILIM サムネイル画像取得API
     public String getExilimThumbnailImage(String FilePath){
         if( mApiId != null && sStr_UrlText != null){
             String url,str, uri;
             url = "http://" + sStr_UrlText + ":4035/gotapi/thumbnail?serviceId=" + mApiId + "&path=" + FilePath;
 
-            str = sendHttpWithResponse(url, "GET", null);
+            str = sendHttpWithResponse(url, "GET");
 
             if (str != null) {
                 try {
@@ -279,13 +270,13 @@ public class PluginControl {
         }
     }
 
-    // Exilim 撮影画像取得API
+    // EXILIM 撮影画像取得API
     public String getExilimCaptureFile(String FilePath){
         if( mApiId != null && sStr_UrlText != null){
             String url,str, uri;
             url = "http://" + sStr_UrlText + ":4035/gotapi/file?serviceId=" + mApiId + "&path=" + FilePath;
 
-            str = sendHttpWithResponse(url, "GET", null);
+            str = sendHttpWithResponse(url, "GET");
 
             if (str != null) {
                 try {
@@ -314,13 +305,13 @@ public class PluginControl {
         }
     }
 
-    // Exilim ズームインAPI
+    // EXILIM ズームインAPI
     public void sendExilimZoomIn(){
         if( mApiId != null && sStr_UrlText != null){
             String url,str;
 
             url = "http://" + sStr_UrlText +":4035/gotapi/camera/zoom?serviceId="+mApiId+"&direction=in&movement=max";
-            str = sendHttpWithResponse(url, "PUT", null);
+            str = sendHttpWithResponse(url, "PUT");
 
             if( str == null ) {
                 Log.e(TAG, "sendLiveViewEnd Http_ERR");
@@ -328,13 +319,13 @@ public class PluginControl {
         }
     }
 
-    // Exilim ズームアウトAPI
+    // EXILIM ズームアウトAPI
     public void sendExilimZoomOut(){
         if( mApiId != null && sStr_UrlText != null){
             String url,str;
 
             url = "http://" + sStr_UrlText +":4035/gotapi/camera/zoom?serviceId="+mApiId+"&direction=out&movement=max";
-            str = sendHttpWithResponse(url, "PUT", null);
+            str = sendHttpWithResponse(url, "PUT");
 
             if( str == null ) {
                 Log.e(TAG, "sendLiveViewEnd Http_ERR");
@@ -343,10 +334,10 @@ public class PluginControl {
     }
 
     // HTTPコマンド送信 (応答付き)
-    private String sendHttpWithResponse( String path, String method, Map<String, String> body) {
+    private String sendHttpWithResponse( String path, String method) {
         byte[] buf;
 
-        buf = sendHttp(path, method, body);
+        buf = sendHttp(path, method);
 
         if (buf != null){
             return new String(buf);
@@ -357,7 +348,7 @@ public class PluginControl {
     }
 
     // HTTPコマンド送信基本API
-    private byte[] sendHttp( String path, String method, Map<String, String> body) {
+    private byte[] sendHttp( String path, String method ) {
         byte[] w = new byte[1024];
         HttpURLConnection c = null;
         InputStream in = null;
@@ -368,41 +359,9 @@ public class PluginControl {
         try{
             URL url = new URL(path);
 
-            if (method.equals("POST")) {
-                final String boundary =  "*****"+ UUID.randomUUID().toString()+"*****";
-                final String twoHyphens = "--";
-                final String lineEnd = "\r\n";
-
-                c = (HttpURLConnection) url.openConnection();
-
-                c.setDoOutput(true);
-                c.setDoInput(true);
-                c.setUseCaches(false);
-
-                c.setRequestMethod(method);
-                c.setRequestProperty("Connection", "Keep-Alive");
-                c.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-                c.setInstanceFollowRedirects(false);
-                c.setRequestProperty("Accept-Language", "jp");
-
-                DataOutputStream os = new DataOutputStream(c.getOutputStream());
-
-                for (Map.Entry<String, String> data : body.entrySet()) {
-                    String key = data.getKey();
-                    String val = data.getValue();
-                    os.writeBytes(twoHyphens + boundary + lineEnd);
-                    os.writeBytes("Content-Disposition: form-data; name=\""+key+"\"" + lineEnd);
-                    os.writeBytes(lineEnd);
-                    os.writeBytes(val+lineEnd);
-
-                }
-                os.writeBytes(twoHyphens + boundary + lineEnd);
-                os.close();
-            }else{
-                c = (HttpURLConnection) url.openConnection();
-                c.setRequestMethod(method);
-                c.connect();
-            }
+            c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod(method);
+            c.connect();
 
             resp_code = c.getResponseCode();
 
