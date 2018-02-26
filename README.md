@@ -8,7 +8,7 @@ Android オープンβ版のAPKファイルの公開です。
 
 (Android Ver.4.4以上対応)
 
-動作確認カメラ：EX-FR200, EX-FR100, EX-ZR3200
+動作確認カメラ：EX-FR200, EX-FR100, EX-ZR3200, EX-FR100KT
 
 
 # ファイル構成
