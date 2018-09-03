@@ -1,6 +1,6 @@
 # EXILIM プラグイン
 
-(ver.1.0.0)
+#### ver.1.0.0
 
 デバイスWeb APIで使用するカシオカメラEXILIMシリーズを制御するためのプラグインです。
 
@@ -12,6 +12,10 @@ Android オープンβ版のAPKファイルの公開です。
 
 動作確認カメラ：EX-FR200, EX-FR100, EX-ZR3200, EX-FR100KT
 
+#### ver.1.0.1 (2018/09/03)
+* 通信安定化
+* CameraRegister Profileをサポート外Profileに変更
+
 # API仕様
 
 本プラグインの対応APIは以下をご参照ください。
@@ -19,8 +23,6 @@ Android オープンβ版のAPKファイルの公開です。
 
 本プラグインのAPI仕様は以下に公開しています。
 - [EXILIM-Plugin API](https://exilim-plugin.github.io/exilimApi/)
-
-
 
 # ファイル構成
 
