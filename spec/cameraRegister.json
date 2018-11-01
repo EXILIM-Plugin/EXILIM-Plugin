@@ -1,1 +1,192 @@
-{"swagger":"2.0","info":{"description":"EXILIMカメラのWiFi接続設定を行なう","version":"2.0.0","title":"Camera Register Profile"},"consumes":["application/x-www-form-urlencoded","multipart/form-data"],"paths":{"/connectionInfo":{"get":{"summary":"EXILIMカメラの接続情報を取得する","description":"","parameters":[{"name":"serviceId","in":"query","required":true,"type":"string"},{"name":"ip","in":"formData","description":"カメラのIPアドレス。","required":true,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/GetConnectionInfoResponse"},"examples":{"application/json":{"result":0,"product":"EXILIM","version":"2.0.0","info":{"Group":"A","Sequence":1}}}}},"x-type":"one-shot"}},"/discoverIp":{"put":{"summary":"カメラのサーチを開始する","description":"カメラのサーチを開始する","parameters":[{"name":"serviceId","in":"formData","required":true,"type":"string"},{"name":"type","in":"formData","required":true,"type":"string","enum":["onetime","loop","auto"]},{"name":"IntervalSec","in":"formData","required":false,"type":"integer"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/DiscoverIpStartResponse"}}},"x-type":"streaming"},"delete":{"summary":"カメラのサーチをを終了する","description":"カメラのサーチをを終了する","parameters":[{"name":"serviceId","in":"query","required":true,"type":"string"},{"name":"target","in":"query","required":false,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/DiscoverIpStopResponse"}}},"x-type":"streaming"}},"/onDiscover":{"get":{"summary":"カメラ接続確認通知イベントを取得する。","description":"","operationId":"mediaStreamRecordingOnPhotoGet","parameters":[{"name":"serviceId","in":"query","description":"サービスID。取得対象スマートデバイス","required":true,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/onDiscoverResponse"},"examples":{"application/json":{"result":0,"product":"Example System","version":"1.0.0","register":{"ip":"192.168.100.2","cameraName":"FR100-ABCDEF"}}}}},"x-type":"one-shot"},"put":{"summary":"カメラ接続確認通知イベントを開始する。","description":"","operationId":"cameraRegisterOnDiscoverPut","parameters":[{"name":"serviceId","in":"formData","description":"サービスID。取得対象スマートデバイス","required":true,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/EventRegistrationResponse"},"examples":{"application/json":{"result":0,"product":"Example System","version":"1.0.0"}}}},"x-type":"event","x-event":{"schema":{"$ref":"#/definitions/DiscoverEvent"},"examples":{"application/json":{"serviceId":"Host.dummyId.localhost.deviceconnect.org","profile":"cameraregister","attribute":"ondiscover","register":{"ip":"192.168.100.2","cameraName":"FR100-ABCDEF"}}}}},"delete":{"summary":"カメラ接続確認通知イベントを停止する。","description":"","operationId":"cameraRegisterOnDiscoverDelete","parameters":[{"name":"serviceId","in":"query","description":"サービスID。取得対象スマートデバイス","required":true,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/EventUnregistrationResponse"},"examples":{"application/json":{"result":0,"product":"Example System","version":"1.0.0"}}}},"x-type":"event"}},"/registerIp":{"get":{"summary":"EXILIMカメラのIPアドレスの登録情報を取得する","description":"","parameters":[{"name":"serviceId","in":"formData","description":"サービスID。取得対象デバイス","required":true,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/GetRegisterIpResponse"},"examples":{"application/json":{"result":0,"product":"Example System","version":"1.0.0","register":[{"ip":"192.168.100.2","cameraName":"FR100-ABCDEF"},{"ip":"192.168.100.3","cameraName":"RED_WIDERANGE_CAMERA"}]}}}},"x-type":"one-shot"},"put":{"summary":"EXILIMカメラのIPアドレスと対応する名前を登録する","description":"IPのみの登録の場合は接続しているカメラから情報を取得する。ここで登録された名前はMediaStreamRecordingプロファイルで使用される。","parameters":[{"name":"serviceId","in":"formData","description":"サービスID。取得対象デバイス","required":true,"type":"string"},{"name":"ip","in":"formData","description":"カメラのIPアドレス","required":true,"type":"string"},{"name":"cameraName","in":"formData","description":"カメラの名前。省略した場合はカメラから情報取得する。","required":false,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/CommonResponse"}}},"x-type":"one-shot"},"delete":{"summary":"EXILIMカメラのIPアドレスを登録解除する","description":"","parameters":[{"name":"serviceId","in":"formData","description":"サービスID。取得対象デバイス","required":true,"type":"string"},{"name":"ip","in":"formData","description":"カメラのIPアドレス。省略した場合は全解除となる。","required":false,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/CommonResponse"}}},"x-type":"one-shot"}}},"definitions":{"GetRegisterIpResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"},{"type":"object","required":["register"],"properties":{"register":{"type":"array","description":"登録情報一覧","title":"登録情報","items":{"type":"object","properties":{"ip":{"type":"string","description":"カメラのIPアドレス","title":"IPアドレス"},"cameraName":{"type":"string","description":"登録されているカメラの名前","title":"ターゲット名"}},"required":["cameraName","ip"]}}}}]},"GetConnectionInfoResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"},{"type":"object","required":["info"],"properties":{"info":{"type":"object","description":"対象カメラの接続位置が、どのグループの何番目かを示す。カメラから送られるJSON形式のデータをそのまま取得する。","title":"接続情報","properties":{}}}}]},"DiscoverIpStartResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"}]},"DiscoverIpStopResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"}]},"onDiscoverResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"},{"$ref":"#/definitions/CameraInfo"}]},"DiscoverEvent":{"allOf":[{"$ref":"#/definitions/CommonEvent"},{"$ref":"#/definitions/CameraInfo"}]},"CameraInfo":{"type":"object","required":["register"],"properties":{"register":{"type":"object","description":"カメラのネットワーク情報","title":"カメラ接続情報","properties":{"ip":{"type":"string","description":"カメラのIPアドレス","title":"IPアドレス"},"cameraName":{"type":"string","description":"登録されているカメラの名前","title":"ターゲット名"}},"required":["cameraName","ip"]}}},"EventRegistrationResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"}]},"EventUnregistrationResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"}]},"CommonResponse":{"type":"object","required":["product","result","version"],"properties":{"result":{"type":"integer","description":"0: 正常応答<br>0以外: 異常応答","title":"処理結果"},"product":{"type":"string","description":"","title":"DeviceConnectシステムの名前"},"version":{"type":"string","description":"","title":"DeviceConnectシステムのバージョン名"},"hmac":{"type":"string","description":"レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。","title":"署名"}}},"CommonEvent":{"type":"object","required":["attribute","profile","serviceId"],"properties":{"serviceId":{"type":"string","description":"","title":"サービスID"},"profile":{"type":"string","description":"","title":"プロファイル名"},"attribute":{"type":"string","description":"","title":"アトリビュート名"}}}}}
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "EXILIMカメラのWiFi接続設定を行なう",
+        "version": "2.0.0",
+        "title": "Camera Register Profile"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/registerIp": {
+            "get": {
+                "summary": "EXILIMカメラのIPアドレスの登録情報を取得する",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象デバイス",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/GetRegisterIpResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "register": [
+                                    {
+                                        "ip" : "192.168.100.2",
+                                        "cameraName" : "FR100-ABCDEF"
+                                    },
+                                    {
+                                        "ip" : "192.168.100.3",
+                                        "cameraName" : "RED_WIDERANGE_CAMERA"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            },
+            "put": {
+                "summary": "EXILIMカメラのIPアドレスと対応する名前を登録する",
+                "description": "IPのみの登録の場合は接続しているカメラから情報を取得する。ここで登録された名前はMediaStreamRecordingプロファイルで使用される。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象デバイス",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ip",
+                        "description": "カメラのIPアドレス",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cameraName",
+                        "description": "カメラの名前。省略した場合はカメラから情報取得する。",
+                        "in": "formData",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            },
+            "delete": {
+                "summary": "EXILIMカメラのIPアドレスを登録解除する",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象デバイス",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ip",
+                        "description": "カメラのIPアドレス。省略した場合は全解除となる。",
+                        "in": "formData",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        }
+    },
+    "definitions": {
+        "GetRegisterIpResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "register"
+                    ],
+                    "properties": {
+                        "register": {
+                            "type": "array",
+                            "title": "登録情報",
+                            "description": "登録情報一覧",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "ip",
+                                    "cameraName"
+                                ],
+                                "properties": {
+                                    "ip": {
+                                        "type": "string",
+                                        "title": "IPアドレス",
+                                        "description": "カメラのIPアドレス"
+                                    },
+                                    "cameraName": {
+                                        "type": "string",
+                                        "title": "ターゲット名",
+                                        "description": "登録されているカメラの名前"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "product",
+                "result",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "description": "0: 正常応答<br>0以外: 異常応答",
+                    "title": "処理結果"
+                },
+                "product": {
+                    "type": "string",
+                    "description": "",
+                    "title": "DeviceConnectシステムの名前"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "",
+                    "title": "DeviceConnectシステムのバージョン名"
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "署名",
+                    "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        }
+    }
+}

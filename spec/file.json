@@ -1,1 +1,267 @@
-{"swagger":"2.0","info":{"description":"EXILIMカメラ内のファイルを操作する。","version":"2.0.0","title":"File Profile"},"consumes":["application/x-www-form-urlencoded","multipart/form-data"],"paths":{"/":{"get":{"summary":"指定のファイルを取得する。","description":"指定ファイルをカメラからコピーし、そのアクセス用uriを取得する。","parameters":[{"name":"serviceId","in":"query","description":"ファイルパス","required":true,"type":"string"},{"name":"path","in":"query","required":true,"type":"string"}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/FileSendResponse"},"examples":{"application/json":{"result":0,"product":"Device Web API Manager","version":"1.0.0","mimeType":"image/jpeg","uri":"http://192.168.1.3:4035/gotapi/files?uri=content%3A%2F%2Fcimg0001.jpg"}}}},"x-type":"one-shot"}},"/list":{"get":{"summary":"指定パス内のファイル一覧を取得する。","description":"","parameters":[{"name":"serviceId","in":"query","required":true,"type":"string"},{"name":"path","in":"query","description":"ファイルパス。EXILIM内のファイルシステムのパスを指定する。省略した場合はルートパスの指定となる。ex)/dcim/100casio/","required":false,"type":"string"},{"name":"mimeType","in":"query","description":"Mime Type。指定された場合、条件が一致したファイルのみが検索対象となる。image/jpeg, video/quicktime, text/directoryが有効","required":false,"type":"string"},{"name":"order","in":"query","description":"取得したファイルの並び順。カンマ区切りで条件,昇降順を指定する。条件はpath,mimeType,fileName,fileSize,fileType,updateDateが有効、昇降順はasc(昇順),dasc(降順)を指定する。","required":false,"type":"array","items":{"type":"string"}},{"name":"offset","in":"query","description":"取得件数の始まり。取得できるファイル数が多いときに、表示開始位置を指定できる。","required":false,"type":"integer","minimum":0.0},{"name":"limit","in":"query","description":"取得件数の制限。取得できるファイル数を制限するときに、その件数を指定できる。","required":false,"type":"integer","minimum":0.0}],"responses":{"200":{"description":"","schema":{"$ref":"#/definitions/FileListResponse"},"examples":{"application/json":{"result":0,"product":"Example System","version":"1.0.0","count":2,"file":[{"path":"/DCIM/100CASIO/CIMG0001.JPG","fileName":"CIMG0001.JPG","mimeType":"image/jpeg","updateDate":"2017-10-10T10:32:10Z","fileSize":65536,"fileType":0}]}}}},"x-type":"one-shot"}}},"definitions":{"FileSendResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"},{"type":"object","required":["mimeType","uri"],"properties":{"mimeType":{"type":"string","description":"URIデータのMimeType","title":"MimeType"},"uri":{"type":"string","description":"ContentProviderのURI<br>このURIからデータを読み込む","title":"URI"}}}]},"FileListResponse":{"allOf":[{"$ref":"#/definitions/CommonResponse"},{"type":"object","required":["count","file"],"properties":{"count":{"type":"integer","description":"検索結果のファイル数","title":"検索結果数"},"file":{"type":"array","description":"検索にヒットしたファイルの情報を持つオブジェクト(object)の配列。","title":"検索にヒットしたファイルの情報リスト","items":{"type":"object","properties":{"path":{"type":"string","description":"","title":"ファイル名を含めたファイルの存在するパス。"},"mimeType":{"type":"string","description":"fileのエンコードするタイプ。","title":"MimeType"},"fileType":{"type":"string","description":"0: ファイル<br>1: ディレクトリ","title":"ファイルの種別","enum":["0","1"]},"fileName":{"type":"string","description":"","title":"ファイルの名前"},"updateDate":{"type":"string","description":"RFC 3339","title":"更新時間"},"fileSize":{"type":"integer","description":"単位はbyte。","title":"ファイルのサイズ。"}},"required":["fileName","fileSize","fileType","mimeType","path","updateDate"]}}}}]},"CommonResponse":{"type":"object","required":["product","result","version"],"properties":{"result":{"type":"integer","description":"0: 正常応答<br>0以外: 異常応答","title":"処理結果"},"product":{"type":"string","description":"","title":"DeviceConnectシステムの名前"},"version":{"type":"string","description":"","title":"DeviceConnectシステムのバージョン名"},"hmac":{"type":"string","description":"アプリケーション側から事前にHMACキーを共有されていた場合は必須。","title":"レスポンスに対する署名"}}}}}
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "EXILIMカメラ内のファイルを操作する。",
+        "version": "2.0.0",
+        "title": "File Profile"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/list": {
+            "get": {
+                "summary": "指定パス内のファイル一覧を取得する。",
+                "description": "",
+                "x-type": "one-shot",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "path",
+                        "description": "ファイルパス。EXILIM内のファイルシステムのパスを指定する。省略した場合はルートパスの指定となる。ex)/dcim/100casio/",
+                        "in": "query",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "mimeType",
+                        "description": "Mime Type。指定された場合、条件が一致したファイルのみが検索対象となる。image/jpeg, video/quicktime, text/directoryが有効",
+                        "in": "query",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "order",
+                        "description": "取得したファイルの並び順。カンマ区切りで条件,昇降順を指定する。条件はpath,mimeType,fileName,fileSize,fileType,updateDateが有効、昇降順はasc(昇順),dasc(降順)を指定する。",
+                        "in": "query",
+                        "required": false,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "description": "取得件数の始まり。取得できるファイル数が多いときに、表示開始位置を指定できる。",
+                        "in": "query",
+                        "required": false,
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    {
+                        "name": "limit",
+                        "description": "取得件数の制限。取得できるファイル数を制限するときに、その件数を指定できる。",
+                        "in": "query",
+                        "required": false,
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/FileListResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "count": 2,
+                                "file": [
+                                    {
+                                        "path" : "/DCIM/100CASIO/CIMG0001.JPG",
+                                        "fileName" : "CIMG0001.JPG",
+                                        "mimeType": "image/jpeg",
+                                        "updateDate":"2017-10-10T10:32:10Z",
+                                        "fileSize": 65536,
+                                        "fileType": 0
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "summary": "指定のファイルを取得する。",
+                "description": "指定ファイルをカメラからコピーし、そのアクセス用uriを取得する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "description": "ファイルパス",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/FileSendResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Device Web API Manager",
+                                "version": "1.0.0",
+                                "mimeType": "image/jpeg",
+                                "uri": "http://192.168.1.3:4035/gotapi/files?uri=content%3A%2F%2Fcimg0001.jpg"
+                            }
+                        }
+                    }
+                },
+                "x-type": "one-shot"
+            }
+        }
+    },
+    "definitions": {
+        "FileSendResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "mimeType",
+                        "uri"
+                    ],
+                    "properties": {
+                        "mimeType": {
+                            "type": "string",
+                            "title": "MimeType",
+                            "description": "URIデータのMimeType"
+                        },
+                        "uri": {
+                            "type": "string",
+                            "title": "URI",
+                            "description": "ContentProviderのURI<br>このURIからデータを読み込む"
+                        }
+                    }
+                }
+            ]
+        },
+        "FileListResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "count",
+                        "file"
+                    ],
+                    "properties": {
+                        "count": {
+                            "type": "integer",
+                            "title": "検索結果数",
+                            "description": "検索結果のファイル数"
+                        },
+                        "file": {
+                            "type": "array",
+                            "title": "検索にヒットしたファイルの情報リスト",
+                            "description": "検索にヒットしたファイルの情報を持つオブジェクト(object)の配列。",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "path",
+                                    "mimeType",
+                                    "fileType",
+                                    "fileName",
+                                    "updateDate",
+                                    "fileSize"
+                                ],
+                                "properties": {
+                                    "path": {
+                                        "type": "string",
+                                        "title": "ファイル名を含めたファイルの存在するパス。",
+                                        "description": ""
+                                    },
+                                    "mimeType": {
+                                        "type": "string",
+                                        "title": "MimeType",
+                                        "description": "fileのエンコードするタイプ。"
+                                    },
+                                    "fileType": {
+                                        "type": "string",
+                                        "title": "ファイルの種別",
+                                        "description": "0: ファイル<br>1: ディレクトリ",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "fileName": {
+                                        "type": "string",
+                                        "title": "ファイルの名前",
+                                        "description": ""
+                                    },
+                                    "updateDate": {
+                                        "type": "string",
+                                        "title": "更新時間",
+                                        "description": "RFC 3339"
+                                    },
+                                    "fileSize": {
+                                        "type": "integer",
+                                        "title": "ファイルのサイズ。",
+                                        "description": "単位はbyte。"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0: 正常応答<br>0以外: 異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムの名前",
+                    "description": ""
+                },
+                "version": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムのバージョン名",
+                    "description": ""
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "レスポンスに対する署名",
+                    "description": "アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        }
+    }
+}

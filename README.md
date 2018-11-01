@@ -14,7 +14,6 @@ Android オープンβ版のAPKファイルの公開です。
 
 #### ver.1.0.1 (2018/09/03)
 * 通信安定化
-* CameraRegister Profileをサポート外Profileに変更
 
 # API仕様
 
